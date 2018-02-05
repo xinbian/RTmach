@@ -16,15 +16,15 @@ import matplotlib.pyplot as plt
 istep = '889000'
 g = 1.0
 Lz = 3.2
-variable = ['PVy','PVz','PPress', 'Prho']
 gamma=1.0
 delimiter =''
-h5file = h5py.File('./temp.h5','r')
+h5file = h5py.File('temp.h5','r+')
 #read dataset dimensions
 mylist = ['Fields/','Prho','/',istep]
 filepath = delimiter.join(mylist)
 databk = h5file.get(filepath)
 m1 = np.array(databk)
+print(m1.shape)
 nz=m1.shape[0]
 ny=m1.shape[1]
 nx=m1.shape[2]
@@ -57,16 +57,17 @@ cs = (gamma*press/rho)**0.5
 mach = (vz**2+vy**2)**0.5/cs
 
 delimiter = ''		
-mylist = ['Fields/','Ma','/',istep]
+mylist = ['Fields/','PMa','/',istep]
 filepath = delimiter.join(mylist)
-h5new.create_dataset(filepath,data=mach)
+h5file.create_dataset(filepath,data=mach)
 
 dzVz = np.gradient(vz, dz, axis=0)
 dyVy = np.gradient(vy, dy, axis=1)
 div = dzVz + dyVy
-mylist = ['Fields/','Div','/',istep]
+print(div)
+mylist = ['Fields/','PDiv','/',istep]
 filepath = delimiter.join(mylist)
-h5new.create_dataset(filepath,data=div)
+h5file.create_dataset(filepath,data=div)
 
 
 
