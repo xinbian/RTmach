@@ -18,14 +18,14 @@ Lz = 3.2
 gamma=1.0
 specout = 1000
 totalsteps = 839626
+step = []
 for i in range(totalsteps/specout):
     step.append(str((i+1)*specout).zfill(6))
-
 delimiter =''
 h5file = h5py.File('tests_single_new.h5','r')
 h5new = h5py.File('new.h5','w') 
 #read dataset dimensions
-mylist = ['Fields/','Prho','/',istep]
+mylist = ['Fields/','Prho','/','002000']
 filepath = delimiter.join(mylist)
 databk = h5file.get(filepath)
 m1 = np.array(databk)
@@ -74,7 +74,8 @@ for istep in step:
 	mylist = ['Fields/','PDiv','/',istep]
 	filepath = delimiter.join(mylist)
 	h5new.create_dataset(filepath,data=div)
-
+	
+	print 'progress:', float(istep)/totalsteps*100, '%'
 
 
 
