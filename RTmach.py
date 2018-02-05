@@ -13,61 +13,67 @@ import numpy as np
 import pylab
 import matplotlib.pyplot as plt
 
-istep = '889000'
 g = 1.0
 Lz = 3.2
 gamma=1.0
+specout = 1000
+totalsteps = 839626
+for i in range(totalsteps/specout):
+    step.append(str((i+1)*specout).zfill(6))
+
 delimiter =''
-h5file = h5py.File('temp.h5','r+')
+h5file = h5py.File('tests_single_new.h5','r')
+h5new = h5py.File('new.h5','w') 
 #read dataset dimensions
 mylist = ['Fields/','Prho','/',istep]
 filepath = delimiter.join(mylist)
 databk = h5file.get(filepath)
 m1 = np.array(databk)
-print(m1.shape)
 nz=m1.shape[0]
 ny=m1.shape[1]
 nx=m1.shape[2]
 dx = dy = dz = Lz/nz
 
-#pressure  
-mylist = ['Fields/','PPress','/',istep]
-filepath = delimiter.join(mylist)
-databk = h5file.get(filepath)
-press = np.array(databk)
-#rho  
-mylist = ['Fields/','Prho','/',istep]
-filepath = delimiter.join(mylist)
-databk = h5file.get(filepath)
-rho = np.array(databk)
-#PVy
-mylist = ['Fields/','PVy','/',istep]
-filepath = delimiter.join(mylist)
-databk = h5file.get(filepath)
-vy = np.array(databk)
 
-#PVz
-mylist = ['Fields/','PVz','/',istep]
-filepath = delimiter.join(mylist)
-databk = h5file.get(filepath)
-vz = np.array(databk)
+for istep in step:
 
-
-cs = (gamma*press/rho)**0.5
-mach = (vz**2+vy**2)**0.5/cs
-
-delimiter = ''		
-mylist = ['Fields/','PMa','/',istep]
-filepath = delimiter.join(mylist)
-h5file.create_dataset(filepath,data=mach)
-
-dzVz = np.gradient(vz, dz, axis=0)
-dyVy = np.gradient(vy, dy, axis=1)
-div = dzVz + dyVy
-print(div)
-mylist = ['Fields/','PDiv','/',istep]
-filepath = delimiter.join(mylist)
-h5file.create_dataset(filepath,data=div)
+	#pressure  
+	mylist = ['Fields/','PPress','/',istep]
+	filepath = delimiter.join(mylist)
+	databk = h5file.get(filepath)
+	press = np.array(databk)
+	#rho  
+	mylist = ['Fields/','Prho','/',istep]
+	filepath = delimiter.join(mylist)
+	databk = h5file.get(filepath)
+	rho = np.array(databk)
+	#PVy
+	mylist = ['Fields/','PVy','/',istep]
+	filepath = delimiter.join(mylist)
+	databk = h5file.get(filepath)
+	vy = np.array(databk)
+	
+	#PVz
+	mylist = ['Fields/','PVz','/',istep]
+	filepath = delimiter.join(mylist)
+	databk = h5file.get(filepath)
+	vz = np.array(databk)
+	
+	
+	cs = (gamma*press/rho)**0.5
+	mach = (vz**2+vy**2)**0.5/cs
+	
+	delimiter = ''		
+	mylist = ['Fields/','PMa','/',istep]
+	filepath = delimiter.join(mylist)
+	h5new.create_dataset(filepath,data=mach)
+	
+	dzVz = np.gradient(vz, dz, axis=0)
+	dyVy = np.gradient(vy, dy, axis=1)
+	div = dzVz + dyVy
+	mylist = ['Fields/','PDiv','/',istep]
+	filepath = delimiter.join(mylist)
+	h5new.create_dataset(filepath,data=div)
 
 
 
@@ -77,6 +83,6 @@ h5file.create_dataset(filepath,data=div)
 
 
 h5file.close()
-    
+h5new.close()
     
     
