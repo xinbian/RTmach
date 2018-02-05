@@ -13,15 +13,13 @@ import numpy as np
 import pylab
 import matplotlib.pyplot as plt
 
-istep = '000005'
-Lz=0.08
-Ly=0.01
+istep = '889000'
 g = 1.0
-waveLen = Ly
-variable = ['PVx','PVy','PVz','PPress', 'Prho']
-gamma=1.66667
+Lz = 3.2
+variable = ['PVy','PVz','PPress', 'Prho']
+gamma=1.0
 delimiter =''
-h5file = h5py.File('tests_single_new.h5','r')
+h5file = h5py.File('./temp.h5','r')
 #read dataset dimensions
 mylist = ['Fields/','Prho','/',istep]
 filepath = delimiter.join(mylist)
@@ -30,36 +28,49 @@ m1 = np.array(databk)
 nz=m1.shape[0]
 ny=m1.shape[1]
 nx=m1.shape[2]
-dz=Lz/nz
+dx = dy = dz = Lz/nz
 
-#inteface postion wrt grid points
-z0 = 10*nz/16
-machGiven = 1.2
-#define in spike line
-#density at interface
-rho = (m1[z0, ny/2-1, 0] + m1[z0-1, ny/2-1, 0])/2
-rho = 0.8
 #pressure  
 mylist = ['Fields/','PPress','/',istep]
 filepath = delimiter.join(mylist)
 databk = h5file.get(filepath)
-m1 = np.array(databk)
-press = (m1[z0, ny/2-1, 0] + m1[z0-1, ny/2-1, 0])/2
-pressTop = m1[nz-1,ny/2-1,0]
-wave = (g*waveLen)**0.5
+press = np.array(databk)
+#rho  
+mylist = ['Fields/','Prho','/',istep]
+filepath = delimiter.join(mylist)
+databk = h5file.get(filepath)
+rho = np.array(databk)
+#PVy
+mylist = ['Fields/','PVy','/',istep]
+filepath = delimiter.join(mylist)
+databk = h5file.get(filepath)
+vy = np.array(databk)
+
+#PVz
+mylist = ['Fields/','PVz','/',istep]
+filepath = delimiter.join(mylist)
+databk = h5file.get(filepath)
+vz = np.array(databk)
+
+
 cs = (gamma*press/rho)**0.5
-mach = wave/cs
-print 'mach number at interface is:', mach
+mach = (vz**2+vy**2)**0.5/cs
+
+delimiter = ''		
+mylist = ['Fields/','Ma','/',istep]
+filepath = delimiter.join(mylist)
+h5new.create_dataset(filepath,data=mach)
+
+dzVz = np.gradient(vz, dz, axis=0)
+dyVy = np.gradient(vy, dy, axis=1)
+div = dzVz + dyVy
+mylist = ['Fields/','Div','/',istep]
+filepath = delimiter.join(mylist)
+h5new.create_dataset(filepath,data=div)
 
 
 
-#####given mach number calculate pressure needed
-pressNeed = rho*g*waveLen/(gamma*machGiven**2)
-print 'the pressure and density at interface is:', press, rho
-print 'for Mach=', machGiven, "the pressure needed is:", pressNeed
-print 'you need add to the pressure intial constant:', pressNeed - press
 
-print 'pressure at top is:', pressTop
 
 
 
