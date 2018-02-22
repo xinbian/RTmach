@@ -18,12 +18,12 @@ Lz = 3.2
 gamma=1.0
 specout = 1000
 totalsteps = 839626
-step = []
-for i in range(totalsteps/specout):
-    step.append(str((i+1)*specout).zfill(6))
+step = ['428000']
+#for i in range(totalsteps/specout):
+#    step.append(str((i+1)*specout).zfill(6))
 delimiter =''
 h5file = h5py.File('tests_single_new.h5','r')
-h5new = h5py.File('new.h5','w') 
+h5new = h5py.File('div_vorticiy.h5','w') 
 #read dataset dimensions
 mylist = ['Fields/','Prho','/','002000']
 filepath = delimiter.join(mylist)
@@ -113,7 +113,7 @@ for istep in step:
 	
 	
 	
-	print 'progress:', float(istep)/totalsteps*100, '%'
+	print('progress:', float(istep)/totalsteps*100, '%')
 
 
 
