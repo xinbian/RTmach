@@ -81,15 +81,7 @@ for istep in step:
 	filepath = delimiter.join(mylist)
 	h5new.create_dataset(filepath,data=div)
 	
-<<<<<<< HEAD
-	#vorticity omega
-	Wx = dyVz - dzVy
-	mylist = ['Fields/','POmegax','/',istep]
-	filepath = delimiter.join(mylist)
-	h5new.create_dataset(filepath,data=Wx)
 
-
-=======
 	#omega 
 	
 	dyVz = np.gradient(vz, dy, axis=1)
@@ -120,7 +112,6 @@ for istep in step:
 		h5new.create_dataset(filepath,data=omega_z)
 	
 	
->>>>>>> 92047c0ef7249db912b9b2939c070fa3c8f962dd
 	
 	print 'progress:', float(istep)/totalsteps*100, '%'
 
